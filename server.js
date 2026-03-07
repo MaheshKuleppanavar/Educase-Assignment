@@ -6,20 +6,13 @@ const app=express();
 import mysql from 'mysql2/promise';
 import crypto from "crypto";
 
-const connection=await mysql.createConnection({
-host:process.env.DB_HOST,
-user:process.env.DB_USER,
-database:process.env.DB_NAME,  
-password:process.env.DB_PASSWORD
-
-})
-
-try{
-    const [results,fields]=await connection.query('SELECT * FROM school');
-}
-catch(err){
-    console.log(err);
-}
+const connection = await mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT
+});
 
 app.use(express.json())
 
@@ -44,7 +37,7 @@ app.post('/addSchool',validateData,async (req,res)=>{
     try{
         let {name,address,latitude,longitude}=req.body;
         const id = crypto.randomUUID();
-        const query=`INSERT INTO school (id,name,address,latitude,longitude) VALUES (?,?,?,?,?)`;
+        const query=`INSERT INTO schools (id,name,address,latitude,longitude) VALUES (?,?,?,?,?)`;
         
         const [results]=await connection.query(query,[id, name, address, latitude, longitude]);
         console.log(results);
@@ -60,13 +53,13 @@ app.get("/listSchools", async (req, res) => {
     const userLat = parseFloat(req.query.latitude);
     const userLon = parseFloat(req.query.longitude);
 
-     if (!userLat || !userLon) {
+    if (isNaN(userLat) || isNaN(userLon))
         return res.status(400).json({
         message: "Latitude and Longitude are required as query parameters"
     });
-    }
+    
 
-    const [schools] = await connection.query("SELECT * FROM school");
+    const [schools] = await connection.query("SELECT * FROM schools");
 
     const schoolsWithDistance = schools.map((school) => {
 
@@ -92,7 +85,10 @@ app.get("/listSchools", async (req, res) => {
 
 });
 
-app.listen(3000,()=>{
+const PORT = process.env.PORT || 3000;
+
+
+app.listen(PORT,()=>{
     console.log('Sever started at http://localhost:3000🚀');
 });
 
