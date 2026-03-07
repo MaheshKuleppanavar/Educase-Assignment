@@ -6,13 +6,23 @@ const app=express();
 import mysql from 'mysql2/promise';
 import crypto from "crypto";
 
-const connection = await mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT
-});
+let connection;
+
+try {
+  connection = await mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
+  });
+
+  console.log("Connected to MySQL database");
+
+} catch (error) {
+  console.error("Database connection failed:", error.message);
+}
+
 
 app.use(express.json())
 
@@ -87,10 +97,8 @@ app.get("/listSchools", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
-
-app.listen(PORT,()=>{
-    console.log('Sever started at http://localhost:3000🚀');
+app.listen(PORT, () => {
+  console.log(`🚀 Server started on port ${PORT}`);
 });
-
 
 
