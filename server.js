@@ -11,19 +11,27 @@ import crypto from "crypto";
 
 let connection;
 
+// try {
+//   connection = await mysql.createConnection({
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_NAME,
+//     port: process.env.DB_PORT
+//   });
+
+//   console.log("Connected to MySQL database");
+
+// } catch (error) {
+//   console.error("Database connection failed:", error.message);
+// }
+
+
 try {
-  connection = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT
-  });
-
-  console.log("Connected to MySQL database");
-
+  connection = await mysql.createConnection(process.env.MYSQL_URL);
+  console.log("✅ Connected to MySQL database");
 } catch (error) {
-  console.error("Database connection failed:", error.message);
+  console.error("❌ Database connection failed:", error);
 }
 
 
