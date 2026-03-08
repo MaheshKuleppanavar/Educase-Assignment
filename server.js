@@ -54,6 +54,14 @@ const validateData=(req,res,next)=>{
         
     next();
 }
+
+app.get("/",(req,res)=>{
+  res.send(`
+      <h1>Welcome to School management Api</h1>
+      <a href="https://educase-assignment.up.railway.app/listSchools?latitude=12.97&longitude=77.59">See Schools Around You</a>
+    `)
+})
+
 app.post('/addSchool',validateData,async (req,res)=>{
     try{
         let {name,address,latitude,longitude}=req.body;
